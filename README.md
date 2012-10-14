@@ -9,7 +9,7 @@ multipartser
 
 ## Usage
 
-Below gets complicated, but so does multipart parsing. Please let me know if you find any are errors.
+Below gets complicated, but so does multipart parsing. Please let me know if you find any errors.
 
 The first half just extracts the boundary from the `Content-Type` header. The second half is the one that actually does the parsing.
 
@@ -72,7 +72,7 @@ http.createServer( function ( req, res ) {
       console.log( 'name', part.name );
       console.log( 'value', part.value );
 
-    }
+    } // else if ( part.type == 'field' )
 
   }); // parser.on 'part'
 
