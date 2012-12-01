@@ -4,7 +4,8 @@
  * (C) 2012 Tristan Slominski
  */
 
-var events = require( 'events' );
+var events = require( 'events' ),
+    grab = require( './grab' );
 
 //
 // ## function multipartser ()
