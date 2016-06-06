@@ -1,4 +1,4 @@
-/* 
+/*
  * index.js : Evented multipart parser
  *
  * (C) 2012 Tristan Slominski
@@ -19,7 +19,7 @@ var multipartser = function multipartser () {
 
   // set boundary for parsing
   emitter.boundary = function boundary ( __boundary ) {
-    
+
     _boundary = __boundary;
     return emitter;
 
@@ -37,9 +37,9 @@ var multipartser = function multipartser () {
     if ( splits.length < 3 ) { return; }
 
     // we found at least one part
-    // the first element should be empty string indicating that 
+    // the first element should be empty string indicating that
     // boundary was at the beginning of the body
-    if ( splits[ 0 ] != '' ) {
+    if ( !splits[ 0 ].match(/^\s+$/) ) {
       emitter.emit( 'error', { noBoundaryAtBodyBeginning : true } );
       return;
     }
@@ -61,7 +61,7 @@ var multipartser = function multipartser () {
 
     } else {
       body = undefined;
-    }    
+    }
 
     emitter.emit( 'parts', parts );
     return emitter;
