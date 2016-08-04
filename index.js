@@ -57,7 +57,7 @@ var multipartser = function multipartser () {
     if ( lastSplit != '--' && lastSplit != '--\r\n' ) {
 
       // we are not finished, change body to contain just the remaining part
-      body = "--" + _boundary + lastSplit;
+      body = "\r\n--" + _boundary + lastSplit;
 
     } else {
       body = undefined;
