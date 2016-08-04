@@ -1,6 +1,6 @@
 {
   "name": "multipartser",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Unfancy evented multipart form request parser.",
   "main": "index.js",
   "scripts": {
