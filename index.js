@@ -7,6 +7,10 @@
 var events = require( 'events' ),
     grab = require( './grab' );
 
+var isStreamFinished = function (lastSplit) {
+  return lastSplit === '--' || lastSplit === '--\r\n';
+};
+
 //
 // ## function multipartser ()
 // Multipartser factory that returns a multipartser event emitter.
@@ -32,9 +36,16 @@ var multipartser = function multipartser () {
 
     // see if body contains a full part
     var splits = body.split( "--" + _boundary );
+    var lastSplit = splits[ splits.length - 1 ];
 
-    // nothing to do if no full parts found yet
-    if ( splits.length < 3 ) { return; }
+    // nothing to do if no full parts found
+    if ( splits.length < 3 ) {
+      // but we could be finished if the last chunk of data is just '-'
+      if ( isStreamFinished( lastSplit ) ) {
+        body = undefined;
+      }
+      return emitter;
+    }
 
     // we found at least one part
     // the first element should be empty string indicating that
@@ -52,9 +63,7 @@ var multipartser = function multipartser () {
     }
 
     // check if we are done, or if there is more stuff coming
-    var lastSplit = splits[ splits.length - 1 ];
-
-    if ( lastSplit != '--' && lastSplit != '--\r\n' ) {
+    if ( !isStreamFinished( lastSplit) ) {
 
       // we are not finished, change body to contain just the remaining part
       body = "\r\n--" + _boundary + lastSplit;
@@ -85,7 +94,7 @@ var multipartser = function multipartser () {
     parts.forEach( function ( part ) {
 
       // part should start with \r\n
-      if ( part.indexOf( "\r\n" ) != 0 ) {
+      if ( part.indexOf( "\r\n" ) !== 0 ) {
         emitter.emit( 'error', { missingRNAtPartBeginning : true, part : part } );
         return;
       }
@@ -94,7 +103,7 @@ var multipartser = function multipartser () {
       part = part.slice( 2 );
 
       // part should end with \r\n
-      if ( part.substring( part.length - 2 ) != "\r\n" ) {
+      if ( part.substring( part.length - 2 ) !== "\r\n" ) {
         emitter.emit( 'error', { missingRNAtPartEnding: true } );
         return;
       }
@@ -112,7 +121,7 @@ var multipartser = function multipartser () {
       part = part.slice( rnIndex + 2 );
 
       // if next line starts with Content-Type and not \r\n, we have a file
-      if ( part.indexOf( "Content-Type" ) == 0 ) {
+      if ( part.indexOf( "Content-Type" ) === 0 ) {
 
         rnIndex = part.indexOf( "\r\n" );
         contentType = part.slice( 0, rnIndex );

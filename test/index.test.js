@@ -54,7 +54,7 @@ describe('multipartser', () => {
     expect(partsStub.secondCall.args[0]).to.eql(['\r\nnot very interesting data\r\n']);
   });
 
-  it('parses multiple data events into parts when last data event completes the boundary', () => {
+  it('parses multiple data events into parts when last data event completes after the boundary', () => {
     const dataBlock1 =
       `\r\n--${boundary}\r\nvery very interesting data` +
       `\r\n--${boundary}-`;
@@ -64,5 +64,17 @@ describe('multipartser', () => {
     emitter.data(dataBlock2);
     emitter.end();
     expect(partsStub.firstCall.args[0]).to.eql(['\r\nvery very interesting data\r\n']);
-  })
+  });
+
+  it('parses multiple data events into parts when last data event completes the boundary', () => {
+    const dataBlock1 =
+      `\r\n--${boundary}\r\nvery very interesting data` +
+      `\r\n--bound`;
+    const dataBlock2 = `ary--\r\n`;
+
+    emitter.data(dataBlock1);
+    emitter.data(dataBlock2);
+    emitter.end();
+    expect(partsStub.firstCall.args[0]).to.eql(['\r\nvery very interesting data\r\n']);
+  });
 });
