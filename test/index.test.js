@@ -25,6 +25,16 @@ describe('multipartser', () => {
     expect(partsStub.firstCall.args[0]).to.eql(['\r\nvery very interesting data\r\n']);
   });
 
+  it('parses simple case into parts with no leading whitespace chars', () => {
+    const dataBlock1 =
+      `--${boundary}\r\nvery very interesting data` +
+      `\r\n--${boundary}--\r\n`;
+
+    emitter.data(dataBlock1);
+    emitter.end();
+    expect(partsStub.firstCall.args[0]).to.eql(['\r\nvery very interesting data\r\n']);
+  });
+
   it('parses multiparts into parts', () => {
     const dataBlock1 =
       `\r\n--${boundary}\r\nvery very interesting data` +

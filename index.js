@@ -50,7 +50,7 @@ var multipartser = function multipartser () {
     // we found at least one part
     // the first element should be empty string indicating that
     // boundary was at the beginning of the body
-    if ( !splits[ 0 ].match(/^\s+$/) ) {
+    if ( !splits[ 0 ].match(/^\s*$/) ) {
       emitter.emit( 'error', { noBoundaryAtBodyBeginning : true } );
       return;
     }
